@@ -1,7 +1,7 @@
 const axios = require("axios");
 const fs = require("fs-extra");
 
-const apiKey = "hgEG2LSoC8VD5A2akNvcFySR";
+const apiKey = "ksfnP9jRftwA5bfHEaijyyxU";
 
 module.exports = {
     config: {
@@ -36,7 +36,7 @@ module.exports = {
             return message.reply("Please provide an image URL or reply to an image..!⚠");
         }
 
-        const processingMessage = await message.reply("🕰️ | removing background...");
+        const processingMessage = await message.reply("⏰ | removing background...");
 
         try {
             const response = await axios.post(
