@@ -21,7 +21,7 @@ module.exports = {
   },
 
   onStart: async function ({ message, event, api }) {
-    api.setMessageReaction("🕰️", event.messageID, (err) => {}, true);
+    api.setMessageReaction("⏰", event.messageID, (err) => {}, true);
     const { type: a, messageReply: b } = event;
     const { attachments: c, threadID: d, messageID: e } = b || {};
 
