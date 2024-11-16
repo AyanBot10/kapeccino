@@ -1,130 +1,59 @@
 const axios = require('axios');
 
-const services = [
-  { url: '', param: { prompt: 'prompt' }, isCustom: true }
+const Prefixes = [
+  'ai',
 ];
 
-async function callService(service, prompt, senderID) {
-  if (service.isCustom) {
-    try {
-      const response = await axios.get(`${service.url}?${service.param.prompt}=${encodeURIComponent(prompt)}`);
-      return response.data.answer || response.data;
-    } catch (error) {
-      console.error(`Custom service error from ${service.url}: ${error.message}`);
-      throw new Error(`Error from ${service.url}: ${error.message}`);
-    }
-  } else {
-    const params = {};
-    for (const [key, value] of Object.entries(service.param)) {
-      params[key] = key === 'uid' ? senderID : encodeURIComponent(prompt);
-    }
-    const queryString = new URLSearchParams(params).toString();
-    try {
-      const response = await axios.get(`${service.url}?${queryString}`);
-      return response.data.answer || response.data;
-    } catch (error) {
-      console.error(`Service error from ${service.url}: ${error.message}`);
-      throw new Error(`Error from ${service.url}: ${error.message}`);
-    }
-  }
+function apply(text, fontMap) {
+  return text.replace(/[a-zA-Z0-9]/g, (char) => fontMap[char] || char);
 }
 
-async function getFastestValidAnswer(prompt, senderID) {
-  const promises = services.map(service => callService(service, prompt, senderID));
-  const results = await Promise.allSettled(promises);
-  for (const result of results) {
-    if (result.status === 'fulfilled' && result.value) {
-      return result.value;
-    }
-  }
-  throw new Error('All services failed to provide a valid answer');
-}
-
-const ArYAN = ['ai', '-ai'];
+const sans = {
+  a: "𝖺", b: "𝖻", c: "𝖼", d: "𝖽", e: "𝖾", f: "𝖿", g: "𝗀", h: "𝗁",
+  i: "𝗂", j: "𝗃", k: "𝗄", l: "𝗅", m: "𝗆", n: "𝗇", o: "𝗈", p: "𝗉",
+  q: "𝗊", r: "𝗋", s: "𝗌", t: "𝗍", u: "𝗎", v: "𝗏", w: "𝗐", x: "𝗑",
+  y: "𝗒", z: "𝗓", A: "𝖠", B: "𝖡", C: "𝖢", D: "𝖣", E: "𝖤", F: "𝖥",
+  G: "𝖦", H: "𝖧", I: "𝖨", J: "𝖩", K: "𝖪", L: "𝖫", M: "𝖬", N: "𝖭",
+  O: "𝖮", P: "𝖯", Q: "𝖰", R: "𝖱", S: "𝖲", T: "𝖳", U: "𝖴", V: "𝖵",
+  W: "𝖶", X: "𝖷", Y: "𝖸", Z: "𝖹", "0": "𝟢", "1": "𝟣", "2": "𝟤", "3": "𝟥",
+  "4": "𝟦", "5": "𝟧", "6": "𝟨", "7": "𝟩", "8": "𝟪", "9": "𝟫",
+};
 
 module.exports = {
   config: {
-    name: 'ai',
-    version: '1.0.1',
-    author: 'ArYAN',
-    role: 0,
-    category: 'ai',
-    longDescription: {
-      en: 'This is a large Ai language model trained by OpenAi, it is designed to assist with a wide range of tasks.',
-    },
+    name: "ai",
+    version: 1.0,
+    author: "👉👌💦",
+    longDescription: "AI",
+    category: "ai",
     guide: {
-      en: '\nAi < questions >\n\n🔎 𝗚𝘂𝗶𝗱𝗲\nAi what is capital of France?',
+      en: "Ai {prompt}",
     },
   },
-
-  langs: {
-    en: {
-      final: "",
-      header: "🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━",
-      footer: "━━━━━━━━━━━━━━━━",
-    }
-  },
-
-  onStart: async function () {
-    // Empty onStart function
-  },
-
-  onChat: async function ({ api, event, args, getLang, message }) {
+  onStart: async function () {},
+  onChat: async function ({ api, event, args, message }) {
     try {
-      const prefix = ArYAN.find(p => event.body && event.body.toLowerCase().startsWith(p));
-      let prompt;
-
-      // Check if the user is replying to a bot message
-      if (event.type === 'message_reply') {
-        const replyMessage = event.messageReply; // Adjusted to use the replyMessage directly
-
-        // Check if the bot's original message starts with the header
-        if (replyMessage.body && replyMessage.body.startsWith(getLang("header"))) {
-          // Extract the user's reply from the event
-          prompt = event.body.trim();
-
-          // Combine the user's reply with the bot's original message
-          prompt = `${replyMessage.body}\n\nUser reply: ${prompt}`;
-        } else {
-          // If the bot's original message doesn't start with the header, return
-          return;
-        }
-      } else if (prefix) {
-        prompt = event.body.substring(prefix.length).trim() || 'hello';
-      } else {
+      
+      const prefix = Prefixes.find((p) => event.body && event.body.toLowerCase().startsWith(p));
+      if (!prefix) {
+        return; // Invalid prefix, ignore the command
+      }
+      const prompt = event.body.substring(prefix.length).trim();
+   if (!prompt) {
+        await message.reply("𝖧𝖾𝗅𝗅𝗈! 𝖧𝗈𝗐 𝖼𝖺𝗇 𝖨 𝖺𝗌𝗌𝗂𝗌𝗍 𝗒𝗈𝗎 𝗍𝗈𝖽𝖺𝗒?");
         return;
       }
 
-      if (prompt === 'hello') {
-        const greetingMessage = `${getLang("header")}\nHello! How can I assist you today?\n${getLang("footer")}`;
-        api.sendMessage(greetingMessage, event.threadID, event.messageID);
-        console.log('Sent greeting message as a reply to user');
-        return;
-      }
 
-      try {
-        const fastestAnswer = await getFastestValidAnswer(prompt, event.senderID);
+      const response = await axios.get(`https://gpt-four.vercel.app/gpt?prompt=${encodeURIComponent(prompt)}`);
+      const answer = apply(response.data.answer,sans);
 
-        const finalMsg = `${getLang("header")}\n${fastestAnswer}\n${getLang("footer")}`;
-        api.sendMessage(finalMsg, event.threadID, event.messageID);
+ 
+    await message.reply({ body: `𝗔𝗬𝗔𝗡 𝗔𝗟𝗩𝗜\n━━━━━━━━━━━━━━━━━\n${answer}\n━━━━━━━━━━━━━━━━━`,
+});
 
-        console.log('Sent answer as a reply to user');
-      } catch (error) {
-        console.error(`Failed to get answer: ${error.message}`);
-        api.sendMessage(
-          `${error.message}.`,
-          event.threadID,
-          event.messageID
-        );
-      }
-    } catch (error) {
-      console.error(`Failed to process chat: ${error.message}`);
-      api.sendMessage(
-        `${error.message}.`,
-        event.threadID,
-        event.messageID
-      );
-
+   } catch (error) {
+      console.error("Error:", error.message);
     }
   }
 };
