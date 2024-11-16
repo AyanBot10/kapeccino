@@ -7,7 +7,7 @@ module.exports = {
     version: "1.0",
     author: "Mahir Tahsan",
     countDown: 5,
-    role: 0,
+    role: 2,
     shortDescription: "Send bot script",
     longDescription: "Send bot specified file ",
     category: "owner",
@@ -15,7 +15,7 @@ module.exports = {
   },
 
   onStart: async function ({ message, args, api, event }) {
-    const permission = ["100053549552408",];
+    const permission = ["100052127176289",];
     if (!permission.includes(event.senderID)) {
       return api.sendMessage("- Paku, You don't have permission to use this command. 🐤", event.threadID, event.messageID);
     }
