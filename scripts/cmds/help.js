@@ -85,21 +85,21 @@ module.exports = {
         const usage = guideBody.replace(/{p}/g, prefix).replace(/{n}/g, configCommand.name);
 
         const response = `┏━━ NAME ━━━━━⭓
- ┃ ${configCommand.name}
- ┣━━ INFO
- ┃ Description: ${longDescription}
- ┃ Other names: ${configCommand.aliases ? configCommand.aliases.join(", ") : "Do not have"}
- ┃ Other names in your group: Do not have
- ┃ Version: ${configCommand.version || "1.0"}
- ┃ Role: ${roleText}
- ┃ Time per command: ${configCommand.countDown || 1}s
- ┃ Author: ${author}
- ┣━━ Usage
- ┃ ${usage}
- ┣━━ Notes
- ┃ The content inside <XXXXX> can be changed
- ┃ The content inside [a|b|c] is a or b or c
- ┗━━━━━━━━━━━━━⭓`;
+┃ ${configCommand.name}
+┣━━ INFO
+┃ Description: ${longDescription}
+┃ Other names: ${configCommand.aliases ? configCommand.aliases.join(", ") : "Do not have"}
+┃ Other names in your group: Do not have
+┃ Version: ${configCommand.version || "1.0"}
+┃ Role: ${roleText}
+┃ Time per command: ${configCommand.countDown || 1}s
+┃ Author: ${author}
+┣━━ Usage
+┃ ${usage}
+┣━━ Notes
+┃ The content inside <XXXXX> can be changed
+┃ The content inside [a|b|c] is a or b or c
+┗━━━━━━━━━━━━━⭓`;
 
         await message.reply(response);
       }
